@@ -130,6 +130,7 @@ def grafico():
 
  #  ----------------------------------------------------------------------------
 
+p_grafico = threading.Thread(target=grafico, name="Gráfico")
 
 def coleta_de_dados(baud_rate):
 
@@ -231,6 +232,7 @@ def coleta_de_dados(baud_rate):
 
  #  -----------------------------------------------
 
+p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
 
 def entrada_do_usuario():
     '''
@@ -298,23 +300,25 @@ def entrada_do_usuario():
 
  #  ----------------------------------------------------------------------------
 
+p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
 
-def iniciar_processos_paralelos():
 
-    p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
-    p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
-    p_grafico = threading.Thread(target=grafico, name="Gráfico")
 
-    p_user.start()
-    p_coleta.start()
-    p_grafico.start()
 
- #  -------------------------------------------------
+
+# Inicializando processos:
+#  -------------------------------------------------
+p_user.start()
+p_coleta.start()
+p_grafico.start()
 
 # -----------------------------------------------
 
+#iuhaeoifjaoeifjf
+#oinasseijfaoej
+#nqnwoiejpqcpjqeqpoj
 
-iniciar_processos_paralelos()
+
 
 
 #Notas:
