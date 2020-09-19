@@ -91,7 +91,8 @@ def grafico():
     y_VEL = []
     y_APPS = []
     y_TM = []
-    y_PRESS = []
+    y_PRESS1 = []
+    y_PRESS2 = []
     y_HV = []
 
     contador = count()
@@ -99,13 +100,14 @@ def grafico():
     # Função que anima o gráfico
     def animate(i):
 
-        global VEL, APPS, TM, PRESS, HV
+        global VEL, APPS, TM, PRESS1, PRESS2, HV
 
         x_eixo.append(next(contador))
         y_VEL.append(VEL)
         y_APPS.append(APPS)
         y_TM.append(TM)
-        y_PRESS.append(PRESS)
+        y_PRESS1.append(PRESS1)
+        y_PRESS2.append(PRESS2)
         y_HV.append(HV)
         
 
@@ -114,7 +116,8 @@ def grafico():
         plt.plot(x_eixo, y_VEL, label='Velocidade')
         plt.plot(x_eixo, y_APPS, label='APPS')
         plt.plot(x_eixo, y_TM, label='T. do Motor')
-        plt.plot(x_eixo, y_PRESS, label='PRESS')
+        plt.plot(x_eixo, y_PRESS1, label='PRESS1')
+        plt.plot(x_eixo, y_PRESS2, label='PRESS2')
         plt.plot(x_eixo, y_HV, label='HV')
 
         plt.legend(loc='upper left')  
@@ -141,7 +144,7 @@ def coleta_de_dados(baud_rate):
     '''
     
     global diretorio, flag
-    global VEL, APPS, TM, IMD, BMS, BSPD, PRESS, HV
+    global VEL, APPS, TM, IMD, BMS, BSPD, PRESS1, PRESS2, HV
 
     PSERIAL = serial.Serial('COM2', baudrate=baud_rate, timeout=2) 
 
@@ -313,13 +316,6 @@ p_coleta.start()
 p_grafico.start()
 
 # -----------------------------------------------
-
-#iuhaeoifjaoeifjf
-#oinasseijfaoej
-#nqnwoiejpqcpjqeqpoj
-
-
-
 
 #Notas:
 #------------------------------------------------
