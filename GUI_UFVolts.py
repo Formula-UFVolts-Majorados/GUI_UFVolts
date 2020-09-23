@@ -6,7 +6,7 @@ Simulação realizada com o auxílio dos softwares:
 -Virtual Serial Ports Emulator
 -Proteus (esquemática de circuito com código para o PIC)
 
-Autor: Déric Augusto - Eletrônica
+Autor: Déric Augusto - Eletrônica 2
 '''
 
 # NOTE: Esse programa está configurado para a leitura do pacote de dados indicado à baixo e Baud Rate de 9600.
