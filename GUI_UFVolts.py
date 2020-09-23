@@ -7,6 +7,7 @@ Simulação realizada com o auxílio dos softwares:
 -Proteus (esquemática de circuito com código para o PIC)
 
 Autor: Déric Augusto - Eletrônica
+       Sandro Manoel - Eletrônica 
 '''
 
 # NOTE: Esse programa está configurado para a leitura do pacote de dados indicado à baixo e Baud Rate de 9600.
