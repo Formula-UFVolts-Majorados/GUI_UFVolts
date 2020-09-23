@@ -10,6 +10,7 @@ Autor: Déric Augusto - Eletrônica 2
        Sandro Manoel - Eletrônica 
        Mayelli Costa - Eletrônica
        Gustavo G.    - Eletrônica
+'''
 
 # NOTE: Esse programa está configurado para a leitura do pacote de dados indicado à baixo e Baud Rate de 9600.
 '''
