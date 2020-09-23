@@ -51,7 +51,6 @@ VEL = APPS = TM = IMD = BMS = BSPD = PRESS1 = PRESS2 = HV = ''
 #-------------------------------------------------
 
 #Funções:
-# ------------------------------------------------
 
 def teste_gera_dados():
 
@@ -80,8 +79,6 @@ def teste_gera_dados():
         PRESS1 += random.randint(-10,8)
         PRESS2 += random.randint(-6,10)
         HV += random.randint(-6,8)
-
-        PRESS = (PRESS1 + PRESS2)*0.5
 
 
 def grafico():
