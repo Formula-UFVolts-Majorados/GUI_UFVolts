@@ -7,7 +7,6 @@ Simulação realizada com o auxílio dos softwares:
 -Proteus (esquemática de circuito com código para o PIC)
 
 Autor: Déric Augusto - Eletrônica 2
-Autor: Déric Augusto - Eletrônica
        Sandro Manoel - Eletrônica 
 '''
 
