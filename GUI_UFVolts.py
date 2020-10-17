@@ -6,10 +6,8 @@ Simulação realizada com o auxílio dos softwares:
 -Virtual Serial Ports Emulator
 -Proteus (esquemática de circuito com código para o PIC)
 
-Autor: Déric Augusto - Eletrônica 2
-       Sandro Manoel - Eletrônica 
-       Mayelli Costa - Eletrônica
-       Gustavo G.    - Eletrônica
+Autores iniciais: Déric Augusto, Gustavo Giacomin, Mayelli Costa e Sandro Manoel.   
+
 '''
 
 # NOTE: Esse programa está configurado para a leitura do pacote de dados indicado à baixo e Baud Rate de 9600.
@@ -34,7 +32,6 @@ String recebida pelo HC-12 (ou pela simulação): -VVVAPPTMTIBBP1P2BHV
 
 import serial # usada para leitura da porta serial
 import threading # usada para execução de atividades de forma paralela
-import time # usada para testes
 import os # usada para: encerrar o programa e pegar o caminho do arquivo deste programa no sistema operacional
 from datetime import datetime # usada para pegar o dado de tempo atual do computador
 import random # usada na função de testes
@@ -142,7 +139,6 @@ def gerar_dados_aleatorios():
         print(end=" ")  
         
  #  ----------------------------------------------------------------------------
-p_gerar = threading.Thread(target=gerar_dados_aleatorios, name='Dados aleatórios')
 
 def coleta_de_dados(baud_rate):
 
@@ -246,7 +242,6 @@ def coleta_de_dados(baud_rate):
                     TXT.write(serialData + ' <> ' + current_time + '\n') 
 
  #  -----------------------------------------------
-p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
 
 def user_interface():
     global area_graficos, area_mostradores, janela_config, subplot1, subplot2, legenda, canvas, status
@@ -547,7 +542,6 @@ def entrada_do_usuario():
             t3 = 'em funcionamento'
 
  #  ----------------------------------------------------------------------------
-p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
 
 #Botões: -----------------------------------------------------------
 
@@ -589,10 +583,16 @@ def bt5_click():
 
 # Inicializando processos: -------------------------------------------------
 
-#p_user.start()
-p_gerar.start()
-#p_coleta.start()
-user_interface()
+def iniciar_processos():
+
+    p_gerar = threading.Thread(target=gerar_dados_aleatorios, name='Dados aleatórios')
+    p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
+    p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
+
+    p_gerar.start()
+    user_interface()
+
+iniciar_processos()
 
 #Notas: ------------------------------------------------
 '''
