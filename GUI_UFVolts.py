@@ -32,6 +32,7 @@ String recebida pelo HC-12 (ou pela simulação): -VVVAPPTMTIBBP1P2BHV
 
 #==================================================
 
+import Botões as bt
 import serial # usada para leitura da porta serial
 import threading # usada para execução de atividades de forma paralela
 import time # usada para testes
@@ -64,9 +65,9 @@ flag = 0
 VEL = APPS = TM = IMD = BMS = BSPD = PRESS1 = PRESS2 = HV = RTD = 0
 
 # Variáveis de objetos:
-graf_select = janela_config = canvas = status = 0
-area_graficos = area_mostradores = legenda = subplot1 = subplot2 = 0
-
+canvas = status = 0
+subplot1 = subplot2 = 0
+#area_graficos = area_mostradores = legenda = graf_select = janela_config =
 # Definindo dimensões do gráfico (eixos)
 x_eixo = []
 y_VEL = []
@@ -249,7 +250,7 @@ def coleta_de_dados(baud_rate):
 p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
 
 def user_interface():
-    global area_graficos, area_mostradores, janela_config, subplot1, subplot2, legenda, canvas, status
+    global subplot1, subplot2, canvas, status#, area_graficos, area_mostradores, janela_config, legenda
 
     # Define a janela principal (objeto) da aplicação
     Interface = Tk()  
@@ -264,26 +265,26 @@ def user_interface():
     lateral_bar = LabelFrame(Interface, bg='#%02x%02x%02x' %(200, 34, 34), borderwidth=0, padx=10, pady=10)
     lateral_bar.pack(side=LEFT, fill="y")
 
-    area_graficos = LabelFrame(Interface, bg="black", borderwidth=0, padx=20, pady=10)
-    area_graficos.pack(side=TOP, fill="both", expand=1)
+    bt.area_graficos = LabelFrame(Interface, bg="black", borderwidth=0, padx=20, pady=10)
+    bt.area_graficos.pack(side=TOP, fill="both", expand=1)
 
-    area_mostradores = LabelFrame(Interface, bg="black", borderwidth=1, padx=20, pady=10)
-    area_mostradores.pack(side=BOTTOM, fill="x")
+    bt.area_mostradores = LabelFrame(Interface, bg="black", borderwidth=1, padx=20, pady=10)
+    bt.area_mostradores.pack(side=BOTTOM, fill="x")
 
     # Inserindo imagens
     imagem_logo = PhotoImage(file="images/logoformula1.png") # importando imagem
-    logoformula = Label(area_mostradores, image=imagem_logo, borderwidth=0) #label com imagem
+    logoformula = Label(bt.area_mostradores, image=imagem_logo, borderwidth=0) #label com imagem
     logoformula.grid(row=1, column=1, sticky=S)
 
     imagem_legenda = PhotoImage(file="images/legenda.png") # importando imagem
-    legenda = Label(Interface, image=imagem_legenda, bg="black", borderwidth=0, padx=20, pady=10) #label com imagem
+    bt.legenda = Label(Interface, image=imagem_legenda, bg="black", borderwidth=0, padx=20, pady=10) #label com imagem
 
     # Criando botões
-    bt1 = Button(lateral_bar, width=7, height=3, text="G1-VEL", command=bt1_click)
-    bt2 = Button(lateral_bar, width=7, height=3, text="G1-TEMP", command=bt2_click)
-    bt3 = Button(lateral_bar, width=7, height=3, text="MENU", command=bt3_click)
-    bt4 = Button(lateral_bar, width=7, height=3, text="CONF", command=bt4_click)
-    bt5 = Button(lateral_bar, width=7, height=3, text="LEGEN", command=bt5_click)
+    bt1 = Button(lateral_bar, width=7, height=3, text="G1-VEL", command=bt.bt1_click)
+    bt2 = Button(lateral_bar, width=7, height=3, text="G1-TEMP", command=bt.bt2_click)
+    bt3 = Button(lateral_bar, width=7, height=3, text="MENU", command=bt.bt3_click)
+    bt4 = Button(lateral_bar, width=7, height=3, text="CONF", command=bt.bt4_click)
+    bt5 = Button(lateral_bar, width=7, height=3, text="LEGEN", command=bt.bt5_click)
     
     bt1.grid(row=0, column=0, pady=(0,10))
     bt2.grid(row=1, column=0, pady=(0,10))
@@ -292,11 +293,11 @@ def user_interface():
     bt5.grid(row=4, column=0, pady=(0,10))
 
     # Adicionando labels
-    status = Label(area_mostradores, text="Status: sem conexão", fg="red", font='CenturyGothic 10 bold', bg='Black')
+    status = Label(bt.area_mostradores, text="Status: sem conexão", fg="red", font='CenturyGothic 10 bold', bg='Black')
     status.grid(row=0, column=1, sticky=N)
 
     # Criando Canvas
-    canvas = tk.Canvas(area_mostradores, width=1500, height=300, highlightthickness=1, bg="black")
+    canvas = tk.Canvas(bt.area_mostradores, width=1500, height=300, highlightthickness=1, bg="black")
     canvas.grid(row=0, column=0, rowspan=2)
 
     # ADICIONANDO GRÁFICOS ----------------------------------------------------
@@ -377,49 +378,49 @@ def user_interface():
 
 
     # JANELA DE CONFIGURAÇÃO --------------------------------------------------------   
-    janela_config = LabelFrame(Interface)
+    bt.janela_config = LabelFrame(Interface)
     
-    lb_cor_de_fundo = Label(janela_config, text= 'Cor de Fundo')
+    lb_cor_de_fundo = Label(bt.janela_config, text= 'Cor de Fundo')
     lb_cor_de_fundo.place(x=10, y= 20)
 
     cor_de_fundo = StringVar()
     cor_de_fundo.set('Preto')
 
-    popupCor = OptionMenu(janela_config, cor_de_fundo, 'Amarelo', 'Branco', 'Vermelho', 'Preto' )
+    popupCor = OptionMenu(bt.janela_config, cor_de_fundo, 'Amarelo', 'Branco', 'Vermelho', 'Preto' )
     popupCor.place(x = 95, y = 20)
 
     def opcao_cor():
         cor = cor_de_fundo.get()
         if cor == 'Amarelo':
             Interface.configure(bg = 'yellow')
-            area_graficos.configure(bg = 'yellow')
-            area_mostradores.configure(bg = 'yellow')
+            bt.area_graficos.configure(bg = 'yellow')
+            bt.area_mostradores.configure(bg = 'yellow')
             canvas.configure(bg = 'yellow')
         if cor == 'Branco':
             Interface.configure(bg = 'white')
-            area_graficos.configure(bg = 'white')
-            area_mostradores.configure(bg = 'white')
+            bt.area_graficos.configure(bg = 'white')
+            bt.area_mostradores.configure(bg = 'white')
             canvas.configure(bg = 'white')
         if cor == 'Vermelho':
             Interface.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
-            area_graficos.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
-            area_mostradores.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
+            bt.area_graficos.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
+            bt.area_mostradores.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
             canvas.configure(bg = '#%02x%02x%02x' %(200, 34, 34))
         if cor == 'Preto':
             Interface.configure(bg = 'black')
-            area_graficos.configure(bg = 'black')
-            area_mostradores.configure(bg = 'black')
+            bt.area_graficos.configure(bg = 'black')
+            bt.area_mostradores.configure(bg = 'black')
             canvas.configure(bg = 'black')
         #janela_config.destroy()
 
-    bt_aplicar = Button(janela_config, text = 'Aplicar', bd = 2, bg = 'white', fg = 'black', 
+    bt_aplicar = Button(bt.janela_config, text = 'Aplicar', bd = 2, bg = 'white', fg = 'black', 
                         font = ('verdana', 8), command = opcao_cor)           
     bt_aplicar.place(x = 40, y = 100)
 
 
     # Função que anima o gráfico
     def animate(i):
-        global VEL, TM, PRESS1, PRESS2, graf_select, subplot1, subplot2
+        global VEL, TM, PRESS1, PRESS2, subplot1, subplot2#, graf_select
 
         #Tempo real para gráfico
         data_hora_atual = datetime.now()
@@ -444,9 +445,9 @@ def user_interface():
         subplot2.cla() 
 
         # Plotando variáveis no gráfico
-        if graf_select == 0:
+        if bt.graf_select == 0:
             subplot1.plot(x_eixo, y_VEL, label='Velocidade')
-        if graf_select == 1:
+        if bt.graf_select == 1:
             subplot1.plot(x_eixo, y_TM, label='Temperatura')
         subplot1.legend(loc='upper left')
 
@@ -471,7 +472,7 @@ def user_interface():
     # ----------------------------------------------------------------------------
 
     # Adicionando figuras à interface do tkinter
-    canvas_VEL = FigureCanvasTkAgg(graficos, area_graficos)
+    canvas_VEL = FigureCanvasTkAgg(graficos, bt.area_graficos)
     canvas_VEL.draw()
     canvas_VEL.get_tk_widget().grid(row=0, column=0)   
 
@@ -549,43 +550,6 @@ def entrada_do_usuario():
  #  ----------------------------------------------------------------------------
 p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
 
-#Botões: -----------------------------------------------------------
-
-def bt1_click():
-    global graf_select
-    if graf_select == 1:
-        graf_select = 0
-    print("bt1_click") 
-
-def bt2_click():
-    global graf_select
-    if graf_select == 0:
-        graf_select = 1
-    print("bt2_click")
-
-def bt3_click():
-    global area_graficos, area_mostradores, legenda, janela_config
-    area_graficos.pack(side=TOP, fill="both", expand=1)
-    area_mostradores.pack(side=BOTTOM, fill="x")
-    legenda.pack_forget()
-    janela_config.pack_forget()
-    print("bt3_click")
-
-def bt4_click():
-    global area_graficos, area_mostradores, legenda, janela_config
-    area_graficos.pack_forget()
-    area_mostradores.pack_forget()
-    legenda.pack_forget()
-    janela_config.pack(side=TOP, fill="both", expand=1)
-    print("bt4_click")
-
-def bt5_click():
-    global area_graficos, area_mostradores, legenda, janela_config
-    area_graficos.pack_forget()
-    area_mostradores.pack_forget()
-    janela_config.pack_forget()
-    legenda.pack(side=LEFT)
-    print("bt5_click")
 
 # Inicializando processos: -------------------------------------------------
 
