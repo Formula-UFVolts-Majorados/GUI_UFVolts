@@ -108,17 +108,7 @@ def user_interface():
     bt.legenda = Label(Interface, image=imagem_legenda, bg="black", borderwidth=0, padx=20, pady=10) #label com imagem
 
     # Criando botões
-    bt1 = Button(lateral_bar, width=7, height=3, text="G1-VEL", command=bt.bt1_click)
-    bt2 = Button(lateral_bar, width=7, height=3, text="G1-TEMP", command=bt.bt2_click)
-    bt3 = Button(lateral_bar, width=7, height=3, text="MENU", command=bt.bt3_click)
-    bt4 = Button(lateral_bar, width=7, height=3, text="CONF", command=bt.bt4_click)
-    bt5 = Button(lateral_bar, width=7, height=3, text="LEGEN", command=bt.bt5_click)
-    
-    bt1.grid(row=0, column=0, pady=(0,10))
-    bt2.grid(row=1, column=0, pady=(0,10))
-    bt3.grid(row=2, column=0, pady=(0,10))
-    bt4.grid(row=3, column=0, pady=(0,10))
-    bt5.grid(row=4, column=0, pady=(0,10))
+    botoes = bt
 
     # Adicionando labels
     status = Label(bt.area_mostradores, text="Status: sem conexão", fg="red", font='CenturyGothic 10 bold', bg='Black')
