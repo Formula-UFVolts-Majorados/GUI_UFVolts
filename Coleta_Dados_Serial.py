@@ -1,3 +1,4 @@
+import Gerador_de_Dados as gd
 import serial # usada para leitura da porta serial
 import os # usada para: encerrar o programa e pegar o caminho do arquivo deste programa no sistema operacional
 from datetime import datetime # usada para pegar o dado de tempo atual do computador
