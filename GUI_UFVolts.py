@@ -90,8 +90,8 @@ def user_interface():
     Interface['bg'] = "black" #'#%02x%02x%02x' %(200, 34, 34) # definindo a cor de fundo da janela (bg = background)
 
     # Criando frames
-    lateral_bar = LabelFrame(Interface, bg='#%02x%02x%02x' %(200, 34, 34), borderwidth=0, padx=10, pady=10)
-    lateral_bar.pack(side=LEFT, fill="y")
+    bt.lateral_bar = LabelFrame(Interface, bg='#%02x%02x%02x' %(200, 34, 34), borderwidth=0, padx=10, pady=10)
+    bt.lateral_bar.pack(side=LEFT, fill="y")
 
     bt.area_graficos = LabelFrame(Interface, bg="black", borderwidth=0, padx=20, pady=10)
     bt.area_graficos.pack(side=TOP, fill="both", expand=1)
@@ -108,7 +108,7 @@ def user_interface():
     bt.legenda = Label(Interface, image=imagem_legenda, bg="black", borderwidth=0, padx=20, pady=10) #label com imagem
 
     # Criando botões
-    botoes = bt
+    bt.Botoes()
 
     # Adicionando labels
     status = Label(bt.area_mostradores, text="Status: sem conexão", fg="red", font='CenturyGothic 10 bold', bg='Black')
