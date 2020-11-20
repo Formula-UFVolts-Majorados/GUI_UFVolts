@@ -31,11 +31,11 @@ String recebida pelo HC-12 (ou pela simulação): -VVVAPPTMTIBBP1P2BHV
 #==================================================
 
 import Botões as bt
-import serial # usada para leitura da porta serial
-import threading # usada para execução de atividades de forma paralela
+import Gerador_de_Dados as gd
+import Coleta_Dados_Serial as cds
 import os # usada para: encerrar o programa e pegar o caminho do arquivo deste programa no sistema operacional
+import threading # usada para execução de atividades de forma paralela
 from datetime import datetime # usada para pegar o dado de tempo atual do computador
-import random # usada na função de testes
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation # a matplotlib é responsável por plotar gráficos
@@ -52,19 +52,20 @@ from tkinter import *
 #Variáveis globais: -------------------------------------------------
 
 # String que define o .txt onde serão armazenados os dados
-path = os.path.dirname(os.path.abspath(__file__))
-diretorio = '%s\\Dados da telemetria.txt' % path
+#path = os.path.dirname(os.path.abspath(__file__))
+#diretorio = '%s\\Dados da telemetria.txt' % path
 
 # Flag do while da função coleta_de_dados:
-flag = 0
+#flag = 0
 
 # Variáveis que armazenam os dados recebidos:
-VEL = APPS = TM = IMD = BMS = BSPD = PRESS1 = PRESS2 = HV = RTD = 0
+#VEL = APPS = TM = IMD = BMS = BSPD = PRESS1 = PRESS2 = HV = RTD = 0
 
 # Variáveis de objetos:
-canvas = status = 0
+canvas = 0
 subplot1 = subplot2 = 0
-#area_graficos = area_mostradores = legenda = graf_select = janela_config =
+#area_graficos = area_mostradores = legenda = graf_select = janela_config = status = 0
+
 # Definindo dimensões do gráfico (eixos)
 x_eixo = []
 y_VEL = []
@@ -76,176 +77,8 @@ y_HV = []
 
 #Funções: -----------------------------------------------------------
 
-def gerar_dados_aleatorios():
-    global VEL, APPS, TM, IMD, BMS, BSPD, PRESS1, PRESS2, HV, RTD, canvas
-
-    sinal = [("0", 1), ("1", 50)]                                  
-    list = [prize for prize, weight in sinal for i in range(weight)]
-    bateria = 100
-    temperatura = random.uniform(24,25)
-    vel = 40
-    pressao = 5
-
-    while 1:
-
-        # Dados de dois estados dos componentes do Shutdown
-        IMD = random.choice(list)
-        BMS = random.choice(list)
-        BSPD = random.choice(list)
-        RTD = random.choice(list)
-
-        # Dados do nível da bateria do HV
-        aux1 = random.randrange(2)
-        bateria = bateria - aux1 
-        if bateria > 0 :
-            HV = bateria
-        else:
-            HV = 0   
-
-        # Dados da temperatura do motor
-        aux2= random.random()
-        temperatura = temperatura + aux2/2
-        if temperatura < 60:
-            TM = temperatura
-        else:
-            TM = 60
-
-        # Dados da velocidade
-        aux3=random.triangular(-3,3,0)
-        vel = vel + aux3
-        if 0 < vel < 90:
-            VEL = vel
-
-        # Dados das Pressões no fluido de freio
-        aux4 = random.uniform(-3,3)
-        pressao = pressao + aux4
-        if 0 < pressao <= 80:
-            PRESS1 = pressao
-        if -2 < pressao < 0:
-            PRESS1 = PRESS2 = random.uniform(60,70)
-        if -4 < pressao < -2:
-            PRESS1 = PRESS2 = random.uniform(0,3)
-        if pressao <= -4:
-            PRESS1 = PRESS2 = random.uniform(50,70)
-        if pressao > 80:
-            PRESS1 = PRESS2 = random.uniform(0,10)    
-        if 0 < pressao < 2:
-            PRESS2 = pressao 
-        if 2 <= pressao < 10:
-            PRESS2 = pressao - random.random()
-        if 10 <= pressao <= 80:
-            PRESS2 = pressao - random.uniform(0,5)  
-        APPS = (PRESS1 + PRESS2) /2 * 1.25
-
-        print(end=" ")  
-        
- #  ----------------------------------------------------------------------------
-
-def coleta_de_dados(baud_rate):
-
-    '''
-        Esta função lê a porta serial COM2, armazena os dados recebidos em um txt e os separa em suas respectivas variáveis, 
-    para que possam ser disponibilizados na interface gráfica por uma outra função.
-
-    '''
-    
-    global diretorio, flag, status
-    global VEL, APPS, TM, IMD, BMS, BSPD, PRESS1, PRESS2, HV
-
-    PSERIAL = serial.Serial('COM2', baudrate=baud_rate, timeout=2) 
-
-    # Conta o número de bytes que estão sendo recebidos
-    # e armazena esse número na variável "number_of_bytes"
-    serialByte = ''
-
-    while serialByte != '-':
-        serialByte = PSERIAL.read(1).decode('ascii')     
-
-    serialByte = ''
-    number_of_bytes = -1
-
-    while serialByte != '-':                           
-        serialByte = PSERIAL.read(1).decode('ascii')
-        number_of_bytes += 1
-   
-    
-    # Executa o contador do txt
-
-    '''
-        O contador do txt conta quantas coletas de dados foram realizadas. À cada vez que o programa é iniciado,
-    é considerada uma coleta.
-
-    '''
-    TXT = open(diretorio, "a+") 
-    TXT.seek(0,0) 
-
-    coletas = TXT.readline(1) 
-
-    if coletas == '': 
-
-        TXT.write('1 coleta armazenada\n')
-        TXT.write('\n' + '='*49 + '\n')
-        TXT.write(' '*13 + 'Coleta de Dados nº1 \n')
-
-    elif coletas != '':
-
-        coletas = int(coletas) 
-        coletas += 1  
-
-        lines = TXT.readlines() 
-
-        with open(diretorio, "w") as TXT:
-
-            lines[0] = ('%s coletas armazenadas\n' %coletas) 
-            
-            for line in lines:
-                TXT.write(line) 
-    
-        with open(diretorio, "a") as TXT: 
-            TXT.write('\n' + '='*49 + '\n')
-            TXT.write(' '*13 + 'Coleta de Dados nº%s \n' %coletas)
-
-    TXT.close()
-    
-
-    # Looping principal da função:
-    while 1:
-        status.configure(text="Status: sem conexão", fg="red")
-        
-        while flag != 1:
-            status.configure(text="Status: conectado", fg="green")
-
-            serialByte = PSERIAL.read(1).decode('ascii')
-
-            if serialByte == '-':
-                
-                serialData = PSERIAL.read(number_of_bytes).decode('ascii')
- 
-                # Separa os dados em suas respectivas variáveis
-                sd_list = list(serialData)
-
-                VEL = sd_list[0] + sd_list[1] + sd_list[2] 
-                APPS = sd_list[3] + sd_list[4] + sd_list[5] 
-                TM = sd_list[6] + sd_list[7] + sd_list[8]  
-                IMD = sd_list[9] 
-                BMS = sd_list[10] 
-                BSPD = sd_list[11]
-                PRESS1 = sd_list[12] + sd_list[13] 
-                PRESS2 = sd_list[14] +sd_list[15] 
-                HV = sd_list[16] + sd_list[17] + sd_list[18] 
-
-                PRESS = (int(PRESS1) + int(PRESS2))*0.5
-                
-                # Salva os dados no txt
-                with open(diretorio, 'a') as TXT:
-
-                    current_time = str(datetime.now())
-                    TXT.write(serialData + ' <> ' + current_time + '\n') 
-
- #  -----------------------------------------------
-
 def user_interface():
-    global subplot1, subplot2, canvas, status#, area_graficos, area_mostradores, janela_config, legenda
+    global subplot1, subplot2, canvas#, status, area_graficos, area_mostradores, janela_config, legenda
 
     # Define a janela principal (objeto) da aplicação
     Interface = Tk()  
@@ -303,30 +136,30 @@ def user_interface():
     subplot2 = graficos.add_subplot(2,1,2)
 
     #  Criando funções de altura
-    alt_press1 = 175 - 1.5*int(PRESS1)
-    alt_press2 = 175 - 1.5*int(PRESS2)
-    alt_BHV = 175 - 1.5*int(HV)
-    alt_temp = 175 - 1.5*int(TM)
-    alt_APPS = 50 + int(APPS)
+    alt_press1 = 175 - 1.5*int(gd.PRESS1)
+    alt_press2 = 175 - 1.5*int(gd.PRESS2)
+    alt_BHV = 175 - 1.5*int(gd.HV)
+    alt_temp = 175 - 1.5*int(gd.TM)
+    alt_APPS = 50 + int(gd.APPS)
 
     #  Adicionando barras gráficas e LEDS de estado
     def _create_circle(self, x, y, r, **kwargs):
         return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
     tk.Canvas.create_circle = _create_circle
     
-    if IMD == "1":
+    if gd.IMD == "1":
         canvas.create_circle(1400, 35, 30, fill="green", outline="#DDD")
     else:
         canvas.create_circle(1400, 35, 30, fill="red", outline="#DDD")
-    if BMS == "1":        
+    if gd.BMS == "1":        
         canvas.create_circle(1400, 105, 30, fill="green", outline="#DDD")
     else:        
         canvas.create_circle(1400, 105, 30, fill="red", outline="#DDD")
-    if BSPD == "1":        
+    if gd.BSPD == "1":        
         canvas.create_circle(1400, 175, 30, fill="green", outline="#DDD")
     else:        
         canvas.create_circle(1400, 175, 30, fill="red", outline="#DDD")
-    if RTD == "1":        
+    if gd.RTD == "1":        
         canvas.create_circle(1400, 245, 30, fill="green", outline="#DDD")
     else:        
         canvas.create_circle(1400, 245, 30, fill="red", outline="#DDD")   
@@ -415,7 +248,7 @@ def user_interface():
 
     # Função que anima o gráfico
     def animate(i):
-        global VEL, TM, PRESS1, PRESS2, subplot1, subplot2#, graf_select
+        global subplot1, subplot2#, graf_select, VEL, TM, PRESS1, PRESS2, 
 
         #Tempo real para gráfico
         data_hora_atual = datetime.now()
@@ -423,10 +256,10 @@ def user_interface():
 
         # Atualizando valores
         x_eixo.append(minuto_segundo_milisegundo)
-        y_VEL.append(VEL)
-        y_TM.append(TM)
-        y_PRESS1.append(PRESS1)
-        y_PRESS2.append(PRESS2)
+        y_VEL.append(gd.VEL)
+        y_TM.append(gd.TM)
+        y_PRESS1.append(gd.PRESS1)
+        y_PRESS2.append(gd.PRESS2)
 
         if len(x_eixo) > 16:
             aux = x_eixo.pop(0)
@@ -454,8 +287,8 @@ def user_interface():
         # Atualizando mostradores
         canvas.delete('PRESS1')
         canvas.delete('PRESS2')
-        alt_press1 = 175 - 1.5*int(PRESS1)
-        alt_press2 = 175 - 1.5*int(PRESS2)
+        alt_press1 = 175 - 1.5*int(gd.PRESS1)
+        alt_press2 = 175 - 1.5*int(gd.PRESS2)
         canvas.create_rectangle(350,alt_press1,380,175,fill = "red",outline = "#DDD", tag='PRESS1')
         canvas.create_rectangle(380,alt_press2,410,175,fill = "red",outline = "#DDD", tag='PRESS2') 
 
@@ -486,7 +319,7 @@ def entrada_do_usuario():
 
     '''
 
-    global flag
+    #global flag
 
     t1 = 'stop'  # ou 'start'
     t2 = 'parar'  # ou 'iniciar'
@@ -516,7 +349,7 @@ def entrada_do_usuario():
         #Resposta "close" (em que o usuário fecha o programa): ------------------
         if x1 == 'close':
 
-            flag = 1  # Para o while da função coleta_de_dados
+            cds.flag = 1  # Para o while da função coleta_de_dados
 
             print('\n \n VOCÊ FINALIZOU O PROGRAMA ! \n')
             os._exit(1)  # Fecha o programa
@@ -525,7 +358,7 @@ def entrada_do_usuario():
         # A) Caso em que a porta serial está em funcionamento (e o usuário para a leitura da porta serial):
         elif x1 == 'stop':
 
-            flag = 1  # Para o while da função coleta_de_dados
+            cds.flag = 1  # Para o while da função coleta_de_dados
             print('\n >> A coleta de dados foi interrompida\n')
 
             t1 = 'start'
@@ -535,7 +368,7 @@ def entrada_do_usuario():
         # B) Caso em que a porta serial está desativada (e o usuário a reativa):
         elif x1 == 'start':
 
-            flag = 0  # reinicia o funcionamento do while da função coleta_de_dados
+            cds.flag = 0  # reinicia o funcionamento do while da função coleta_de_dados
             print('\n >> A coleta de dados foi reestabelecida\n')
 
             t1 = 'stop'
@@ -544,13 +377,12 @@ def entrada_do_usuario():
 
  #  ----------------------------------------------------------------------------
 
-
 # Inicializando processos: -------------------------------------------------
 
 def iniciar_processos():
 
-    p_gerar = threading.Thread(target=gerar_dados_aleatorios, name='Dados aleatórios')
-    p_coleta = threading.Thread(target=coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
+    p_gerar = threading.Thread(target=gd.gerar_dados_aleatorios, name='Dados aleatórios')
+    p_coleta = threading.Thread(target=cds.coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
     p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
 
     p_gerar.start()
