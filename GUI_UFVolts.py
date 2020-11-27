@@ -30,7 +30,7 @@ String recebida pelo HC-12 (ou pela simulação): -VVVAPPTMTIBBP1P2BHV
 
 #==================================================
 
-import Botões as bt
+import Botoes as bt
 import Gerador_de_Dados as gd
 import Coleta_Dados_Serial as cds
 import os # usada para: encerrar o programa e pegar o caminho do arquivo deste programa no sistema operacional
