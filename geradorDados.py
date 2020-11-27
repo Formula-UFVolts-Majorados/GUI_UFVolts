@@ -3,7 +3,7 @@ import random # usada na função de testes
 # Variáveis que armazenam os dados recebidos:
 VEL = APPS = TM = IMD = BMS = BSPD = PRESS1 = PRESS2 = HV = RTD = 0
 
-def gerar_dados_aleatorios():
+def gerarDadosAleatorios():
     global VEL, APPS, TM, IMD, BMS, BSPD, PRESS1, PRESS2, HV, RTD
 
     sinal = [("0", 1), ("1", 50)]                                  

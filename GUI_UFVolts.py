@@ -30,9 +30,10 @@ String recebida pelo HC-12 (ou pela simulação): -VVVAPPTMTIBBP1P2BHV
 
 #==================================================
 
-import Botoes as bt
-import Gerador_de_Dados as gd
-import Coleta_Dados_Serial as cds
+import botoes as bt
+import geradorDados as gd
+import coletaDados as cds
+
 import os # usada para: encerrar o programa e pegar o caminho do arquivo deste programa no sistema operacional
 import threading # usada para execução de atividades de forma paralela
 from datetime import datetime # usada para pegar o dado de tempo atual do computador
@@ -77,7 +78,7 @@ y_HV = []
 
 #Funções: -----------------------------------------------------------
 
-def user_interface():
+def userInterface():
     global subplot1, subplot2, canvas#, status, area_graficos, area_mostradores, janela_config, legenda
 
     # Define a janela principal (objeto) da aplicação
@@ -312,7 +313,7 @@ def user_interface():
 
  # ----------------------------------------------------------------------------
 
-def entrada_do_usuario():
+def entradaUsuario():
     '''
         Esta função recebe entradas do usuário. Através dela o usuário pode encerrar o programa, ou alternar entre o funcionamento 
         e a desativação da porta serial. 
@@ -379,16 +380,16 @@ def entrada_do_usuario():
 
 # Inicializando processos: -------------------------------------------------
 
-def iniciar_processos():
+def iniciarProcessos():
 
-    p_gerar = threading.Thread(target=gd.gerar_dados_aleatorios, name='Dados aleatórios')
-    p_coleta = threading.Thread(target=cds.coleta_de_dados, name="Coleta de dados da serial", args=([9600]))
-    p_user = threading.Thread(target=entrada_do_usuario, name="Processo de interface de usuário")
+    p_gerar = threading.Thread(target=gd.gerarDadosAleatorios, name='Dados aleatórios')
+    p_coleta = threading.Thread(target=cds.coletaDados, name="Coleta de dados da serial", args=([9600]))
+    p_user = threading.Thread(target=entradaUsuario, name="Processo de interface de usuário")
 
     p_gerar.start()
-    user_interface()
+    userInterface()
 
-iniciar_processos()
+iniciarProcessos()
 
 #Notas: ------------------------------------------------
 '''
