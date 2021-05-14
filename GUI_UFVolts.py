@@ -86,6 +86,8 @@ def user_interface():
 
     # Definindo características da janela
     Interface.title('Telemetria UFVolts Majorados')
+    lado, cima = (Interface.winfo_screenwidth()), (Interface.winfo_screenheight())
+    Interface.geometry('%dx%d+0+0' % (lado,cima))
     Interface.state('zoomed')  # define que a janela fique em tela cheia
     Interface.iconbitmap('images/icon.ico')
     Interface['bg'] = "black" #'#%02x%02x%02x' %(200, 34, 34) # definindo a cor de fundo da janela (bg = background)
